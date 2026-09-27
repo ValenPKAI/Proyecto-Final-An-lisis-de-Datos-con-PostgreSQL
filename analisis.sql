@@ -3,7 +3,7 @@
 -- ==========================================================
 
 -- ----------------------------------------------------------
--- 1. Top 5 clientes por gasto total (GROUP BY + SUM)[cite: 27]
+-- 1. Top 5 clientes por gasto total
 -- ----------------------------------------------------------
 -- Justificación comercial: Identificamos el segmento de mayor valor (VIP) para focalizar 
 -- campañas de retención exclusivas y evitar la fuga de nuestros compradores más rentables.
@@ -18,7 +18,7 @@ ORDER BY gasto_total DESC
 LIMIT 5;
 
 -- ----------------------------------------------------------
--- 2. Ventas totales por mes (Funciones de fecha)[cite: 27]
+-- 2. Ventas totales por mes
 -- ----------------------------------------------------------
 -- Justificación comercial: Evaluamos la evolución de la facturación mensual para detectar 
 -- estacionalidades operativas y medir si las acciones comerciales impactan en el crecimiento de los ingresos.
@@ -31,7 +31,7 @@ GROUP BY mes
 ORDER BY mes ASC;
 
 -- ----------------------------------------------------------
--- 3. Los 3 productos menos vendidos (Baja Rotación)[cite: 27]
+-- 3. Los 3 productos menos vendidos (Baja Rotación y COALESCE)
 -- ----------------------------------------------------------
 -- Justificación comercial: Detectamos inventario inmovilizado. El uso defensivo de LEFT JOIN 
 -- combinado con COALESCE nos permite asegurar que los artículos sin ninguna venta aparezcan reflejados 
@@ -48,11 +48,11 @@ ORDER BY unidades_vendidas ASC
 LIMIT 3;
 
 -- ----------------------------------------------------------
--- 4. Ranking de pedidos por categoría (Window Function: RANK())[cite: 27]
+-- 4. Ranking de pedidos por categoría (Window Function: RANK)
 -- ----------------------------------------------------------
 -- Justificación comercial: Analizamos el comportamiento de compra particionando por categoría de producto. 
 -- Esto permite identificar los tickets más destacados dentro de cada rubro de forma aislada, 
--- evitando que las categorías de mayor precio nominal opacuen el éxito comercial de las más accesibles.
+-- evitando que las categorías de mayor precio nominal opaquen el éxito comercial de las más accesibles.
 SELECT 
     p.id AS pedido_id,
     pr.nombre_producto,
