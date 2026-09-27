@@ -7,7 +7,7 @@
 -- CREATE DATABASE capstone_project;
 -- \c capstone_project
 
--- Eliminación previa para garantizar idempotencia y evitar errores de reejecución
+-- Eliminación previa para garantizar idempotencia
 DROP TABLE IF EXISTS pedidos CASCADE;
 DROP TABLE IF EXISTS productos CASCADE;
 DROP TABLE IF EXISTS clientes CASCADE;
@@ -20,7 +20,7 @@ CREATE TABLE clientes (
     pais VARCHAR(50) DEFAULT 'Argentina'
 );
 
--- 2. Tabla de Productos (Utiliza NUMERIC para importes precisos)[cite: 27]
+-- 2. Tabla de Productos
 CREATE TABLE productos (
     id SERIAL PRIMARY KEY,
     nombre_producto VARCHAR(150) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE productos (
     precio NUMERIC(10, 2) NOT NULL CHECK (precio >= 0)
 );
 
--- 3. Tabla de Pedidos (Utiliza DATE para fechas y restricciones de validación)[cite: 26, 27]
+-- 3. Tabla de Pedidos 
 CREATE TABLE pedidos (
     id SERIAL PRIMARY KEY,
     cliente_id INT REFERENCES clientes(id),
@@ -42,27 +42,54 @@ CREATE TABLE pedidos (
 -- INSERCIÓN DE DATOS DE PRUEBA
 -- ==========================================================
 
+-- 10 Clientes
 INSERT INTO clientes (nombre, email, pais) VALUES
 ('Valentino Pocai', 'valen@email.com', 'Argentina'),
 ('Belén Gomez', 'belen@email.com', 'Argentina'),
 ('Carlos Perez', 'carlos@email.com', 'Chile'),
 ('Ana Lopez', 'ana@email.com', 'Uruguay'),
-('Lucia Mendez', 'lucia@email.com', 'Argentina');
+('Lucia Mendez', 'lucia@email.com', 'Argentina'),
+('Marcos Silva', 'marcos@email.com', 'Brasil'),
+('Julieta Paz', 'julieta@email.com', 'Argentina'),
+('Diego Torres', 'diego@email.com', 'Chile'),
+('Sofia Ruiz', 'sofia@email.com', 'Colombia'),
+('Martin Fierro', 'martin@email.com', 'Argentina');
 
+-- 8 Productos (Incluyendo uno sin ventas para probar COALESCE)
 INSERT INTO productos (nombre_producto, categoria, precio) VALUES
 ('Camisa Slim Fit', 'Indumentaria', 25.50),
 ('Notebook Gamer', 'Tecnología', 1200.00),
 ('Auriculares Bluetooth', 'Tecnología', 45.00),
 ('Zapatillas Urbanas', 'Calzado', 80.00),
 ('Mochila Impermeable', 'Accesorios', 35.00),
-('Smartwatch Deportivo', 'Tecnología', 150.00); -- Producto creado para probar baja rotación (cero ventas)
+('Monitor 24 pulgadas', 'Tecnología', 250.00),
+('Jean Clásico', 'Indumentaria', 40.00),
+('Reloj Inteligente', 'Tecnología', 150.00); 
 
+-- 25 Pedidos distribuidos en distintos meses
 INSERT INTO pedidos (cliente_id, producto_id, cantidad, fecha_venta, monto_total) VALUES
-(1, 2, 1, '2026-01-15', 1200.00),
-(1, 3, 2, '2026-01-20', 90.00),
-(2, 1, 3, '2026-02-10', 76.50),
-(3, 4, 1, '2026-02-18', 80.00),
-(4, 5, 2, '2026-03-05', 70.00),
-(5, 3, 1, '2026-03-12', 45.00),
-(2, 5, 1, '2026-03-25', 35.00),
-(1, 4, 1, '2026-04-02', 80.00);
+(1, 2, 1, '2026-01-10', 1200.00),
+(2, 3, 2, '2026-01-15', 90.00),
+(3, 4, 1, '2026-01-20', 80.00),
+(4, 5, 1, '2026-01-22', 35.00),
+(5, 1, 3, '2026-02-05', 76.50),
+(1, 6, 2, '2026-02-10', 500.00),
+(6, 4, 1, '2026-02-14', 80.00),
+(7, 3, 1, '2026-02-28', 45.00),
+(8, 2, 1, '2026-03-05', 1200.00),
+(9, 7, 2, '2026-03-10', 80.00),
+(10, 1, 1, '2026-03-15', 25.50),
+(1, 3, 1, '2026-03-20', 45.00),
+(2, 6, 1, '2026-03-22', 250.00),
+(3, 5, 2, '2026-04-02', 70.00),
+(4, 4, 1, '2026-04-05', 80.00),
+(5, 7, 1, '2026-04-10', 40.00),
+(6, 3, 3, '2026-04-12', 135.00),
+(7, 1, 2, '2026-04-18', 51.00),
+(8, 6, 1, '2026-04-25', 250.00),
+(9, 5, 1, '2026-05-01', 35.00),
+(10, 4, 1, '2026-05-05', 80.00),
+(1, 7, 2, '2026-05-10', 80.00),
+(2, 1, 1, '2026-05-15', 25.50),
+(3, 6, 1, '2026-05-20', 250.00),
+(4, 3, 1, '2026-05-25', 45.00);
